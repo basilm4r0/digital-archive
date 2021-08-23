@@ -6,13 +6,15 @@ Info on some docker images https://forum.omeka.org/t/omeka-s-docker-image-for-ve
 
 Assuming docker-compose is properly installed, just run `docker-compose -p omeka up -d` in this folder to start the deployment. `docker-compose -p omeka down` to stop it.
 
+The Omeka S instance is then accessible at `http://localhost:8080`.
+
 An initial user is created as:
 ```
 email: admin@dummymail.com
 password: admin_default_password
 ```
 
-It shoulde be changed at the first login to avoid security issues.
+It should be be changed at the first login to avoid security issues.
 
 ## Modules
 
