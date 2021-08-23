@@ -15,20 +15,31 @@ services:
       - "3306:3306"
 
   backend:
-    image: biblibre/omeka-s:latest
+    image: biblibre/omeka-s:3.0.2
     environment:
       - MYSQL_HOST=db
-      - DB_NAME=collective
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
+      - OMEKA_ADMIN_EMAIL=admin@dummymail.com
+      - OMEKA_ADMIN_NAME=admin
+      - OMEKA_ADMIN_PASSWORD=admin_default_password
     volumes:
       - ./omeka-modules:/var/www/html/modules
-        # - backend-config:/var/www/providence/app/conf
-        # - backend-media:/var/www/providence/media/
     depends_on:
       - db
+      - solr
     ports:
       - "8080:80"
 
+  solr:
+    image: solr:8.8.2
+    volumes:
+      - solr-data:/var/solr
+    expose:
+      - "8983"
+    ports:
+      - "8983:8983"
+
 volumes:
   db-data:
+  solr-data:

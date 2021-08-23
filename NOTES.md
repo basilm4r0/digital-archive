@@ -1,25 +1,22 @@
-
-
-# CollectiveAccess
-
-Single docker file 1.7.11 https://github.com/GovernoRegionalAcores/collectiveaccess
-Docker compose 1.7.8 https://github.com/pkuehne/collectiveaccess
-
-In collectiveaccess repo (which is the compose repo with the version updated to 1.7.11), just build the image `docker build . -t collective` then run `docker-compose -p collectiveaccess up -d`.
-
-Needs to install by going to `127.0.0.1:8080/providence/install`
-
-Collectiveaccess 
-- admin, h3r1tag3
-
 # Omeka S
 
-Info on some docker images https://forum.omeka.org/t/omeka-s-docker-image-for-version-3-0/13247/3
+Info on some docker images https://forum.omeka.org/t/omeka-s-docker-image-for-version-3-0/13247/3, the current image is taken from https://git.biblibre.com/docker/omeka-s.
 
-`docker-compose -p omeka up -d` in this folder, does mount the `omeka-modules` folder as a volume.
+## Base commands
 
-seg.benoit@gmail.com
-$r365Yl1fN&M
+Assuming docker-compose is properly installed, just run `docker-compose -p omeka up -d` in this folder to start the deployment. `docker-compose -p omeka down` to stop it.
+
+An initial user is created as:
+```
+email: admin@dummymail.com
+password: admin_default_password
+```
+
+It shoulde be changed at the first login to avoid security issues.
+
+## Modules
+
+The `docker-compose.yml` specifies the local `omeka-modules` folder as a volume. So adding modules can easily be done by just running the following commands
 
 ```
 mkdir omeka-modules
@@ -34,6 +31,29 @@ wget https://github.com/zerocrates/PdfEmbedS/releases/download/v1.2.0/PdfEmbed-1
 unzip PdfEmbed-1.2.0.zip
 ```
 
+## Things to address for deployment
+
+### HTTPS
+
+Can probably be done by having a local proxy server in front (like `nginx`) and using certbot for https configuration of the proxy server.
+
+### Automatic Thumbnail of PDFs
+
+Needs to change imagemagick policy so that it process PDFs
+https://forum.omeka.org/t/thumbnail-image-icon-for-pdfs/6680/9
+
+### Omeka Media as a volume directory
+
+Currently the media files (such as PDFs) directory is not a volume and is probably erased between docker restarts, that needs to be addressed.
+
+### Backups
+
+Probably the easiest way to do it is by saving the docker volumes. For instance, we could change them to be local directories (just like the modules), and save them to `.tar` files and upload them to a S3 or equivalent long term storage. It is important that the deployment would be shut down before saving the directories to avoid conccurent read/writes.
+
+The backup procedure should be tried before deploying.
+
+
+# Notes (for Benoit)
 
 ## Full-text-search
 
@@ -68,3 +88,14 @@ Directly convert to OCRized PDF https://github.com/jbarlow83/OCRmyPDF
 Possible to add plugins to add OCREngine https://github.com/jbarlow83/OCRmyPDF/blob/master/src/ocrmypdf/pluginspec.py#L321
 
 
+# CollectiveAccess
+
+Single docker file 1.7.11 https://github.com/GovernoRegionalAcores/collectiveaccess
+Docker compose 1.7.8 https://github.com/pkuehne/collectiveaccess
+
+In collectiveaccess repo (which is the compose repo with the version updated to 1.7.11), just build the image `docker build . -t collective` then run `docker-compose -p collectiveaccess up -d`.
+
+Needs to install by going to `127.0.0.1:8080/providence/install`
+
+Collectiveaccess 
+- admin, h3r1tag3
