@@ -35,6 +35,10 @@ unzip PdfEmbed-1.2.0.zip
 
 ## Things to address for deployment
 
+### Upload size
+
+The default maximum file size for uploading document is quite small and should be increased. It is most likely a PHP configuration thing.
+
 ### HTTPS
 
 Can probably be done by having a local proxy server in front (like `nginx`) and using certbot for https configuration of the proxy server.
