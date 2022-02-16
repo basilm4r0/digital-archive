@@ -29,7 +29,16 @@ services:
       - db
       - solr
     ports:
-      - "8080:80"
+      - "80:80"
+
+  solr:
+    image: solr:8.8.2
+    volumes:
+      - solr-data:/var/solr
+    expose:
+      - "8983"
+    ports:
+      - "8983:8983"
 
   solr:
     image: solr:8.8.2
