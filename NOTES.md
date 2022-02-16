@@ -18,8 +18,13 @@ Info on some docker images https://forum.omeka.org/t/omeka-s-docker-image-for-ve
 
 `docker-compose -p omeka up -d` in this folder, does mount the `omeka-modules` folder as a volume.
 
+`docker exec omeka_solr_1 bin/solr create_core -c omeka-s` to initialize solr core
+
+Set `solr:8983/solr/omeka-s` for the url of the solr core.
+
+http://34.65.82.241/admin
 seg.benoit@gmail.com
-$r365Yl1fN&M
+r365Yl1fN&M
 
 ```
 mkdir omeka-modules
@@ -32,6 +37,13 @@ unzip ValueSuggest-1.8.0.zip
 
 wget https://github.com/zerocrates/PdfEmbedS/releases/download/v1.2.0/PdfEmbed-1.2.0.zip
 unzip PdfEmbed-1.2.0.zip
+
+wget https://github.com/biblibre/omeka-s-module-Search/releases/download/v0.9.0/Search-0.9.0.zip
+unzip Search-0.9.0.zip
+rm Search-0.9.0.zip
+wget https://github.com/biblibre/omeka-s-module-Solr/releases/download/v0.9.0/Solr-0.9.0.zip
+unzip Solr-0.9.0.zip
+rm Solr-0.9.0.zip
 ```
 
 
@@ -40,6 +52,7 @@ unzip PdfEmbed-1.2.0.zip
 https://forum.omeka.org/t/what-are-the-best-practices-for-full-text-search-with-omeka-s/5891
 
 https://www.biblibre.com/fr/blog/rechercher-avec-solr-dans-omeka-s-1-installation-et-configuration-minimale/
+https://www.biblibre.com/fr/blog/rechercher-avec-solr-dans-omeka-s-2-facettes/
 
 ## API
 
@@ -66,5 +79,6 @@ https://github.com/OpenITI/OCR_GS_Data
 
 Directly convert to OCRized PDF https://github.com/jbarlow83/OCRmyPDF
 Possible to add plugins to add OCREngine https://github.com/jbarlow83/OCRmyPDF/blob/master/src/ocrmypdf/pluginspec.py#L321
+Generating PDF is probably not super simple though, generating hocr is probably the safest route, but according to https://ocrmypdf.readthedocs.io/en/latest/advanced.html#the-hocr-renderer the hocr pdf renderer does not handle non-latin script characters.
 
-
+Kraken arabic model https://github.com/OpenITI/OCR_GS_Data/blob/master/ara/abhath/arabic_generalized.mlmodel

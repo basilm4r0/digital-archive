@@ -27,4 +27,5 @@ dependencies:
   - imagemagick<7.0.9
   - pip:
     - coremltools>=3.3
-    - git+https://github.com/mittagessen/kraken.git@master
+    - kraken
+    - google-cloud-vision
