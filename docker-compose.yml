@@ -20,18 +20,25 @@ services:
       - MYSQL_HOST=db
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
-      - OMEKA_ADMIN_EMAIL=seg.benoit@gmail.com
-      - OMEKA_ADMIN_NAME=Benoit
-      - OMEKA_ADMIN_PASSWORD=r365Yl1fN&M
+      - OMEKA_ADMIN_EMAIL=admin@dummymail.com
+      - OMEKA_ADMIN_NAME=admin
+      - OMEKA_ADMIN_PASSWORD=admin_default_password
     volumes:
       - ./omeka-modules:/var/www/html/modules
-        # - backend-config:/var/www/providence/app/conf
-        # - backend-media:/var/www/providence/media/
     depends_on:
       - db
       - solr
     ports:
       - "80:80"
+
+  solr:
+    image: solr:8.8.2
+    volumes:
+      - solr-data:/var/solr
+    expose:
+      - "8983"
+    ports:
+      - "8983:8983"
 
   solr:
     image: solr:8.8.2
