@@ -12,11 +12,11 @@ services:
     ports:
       - "3306"
 
-  backend:
+  omeka:
     build: omeka_docker
     #image: giocomai/omeka-s-docker:v3.1.1
     volumes:
-      - omeka-files:/var/www/html/files
+      - files:/var/www/html/files
     depends_on:
       - db
       #- solr
@@ -36,4 +36,4 @@ services:
 volumes:
   db-data:
   solr-data:
-  omeka-files:
+  files:
