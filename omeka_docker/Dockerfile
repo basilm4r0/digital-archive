@@ -45,8 +45,8 @@ COPY ./.htaccess /var/www/html/.htaccess
 
 COPY ./database.ini /var/www/html/config/
 COPY ./local.config.php /var/www/html/config/
-COPY ./modules /var/www/html/
-COPY ./themes /var/www/html/
+COPY ./modules /var/www/html/modules
+COPY ./themes /var/www/html/themes
 RUN mkdir -p /var/www/html/files
 RUN chown -R www-data:www-data /var/www/html/ \
     && chmod 600 /var/www/html/config/database.ini \
