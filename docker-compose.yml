@@ -33,6 +33,11 @@ services:
     # # Change permissions of the solr folder, create a default core and start solr as solr user
     # command: bash -c "chown -R 8983:8983 /var/solr && runuser -u solr -- solr start"
 
+  ocr-service:
+    build: ocr_service
+    depends_on:
+      - omeka
+
 volumes:
   db-data:
   solr-data:
