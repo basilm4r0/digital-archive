@@ -1,0 +1,39 @@
+version: "3.7"
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=omeka-s
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+    volumes:
+      - ./omeka-data/db:/var/lib/mysql
+    ports:
+      - "3306"
+
+  backend:
+    image: biblibre/omeka-s:3.0.2
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+      - OMEKA_ADMIN_EMAIL=admin@dummymail.com
+      - OMEKA_ADMIN_NAME=admin
+      - OMEKA_ADMIN_PASSWORD=admin_default_password
+    volumes:
+      - ./omeka-data/omeka/modules:/var/www/html/modules
+      - ./omeka-data/omeka/themes:/var/www/html/themes
+      - ./omeka-data/omeka/files:/var/www/html/files
+    depends_on:
+      - db
+      # - solr
+    ports:
+      - "8001:80"
+
+  # solr:
+  #   image: solr:8.8.2
+  #   volumes:
+  #     - ./omeka-data/solr:/var/solr
+  #   ports:
+  #     - "8983:8983"

@@ -2,53 +2,38 @@ version: "3.7"
 services:
   db:
     image: mysql:5.7
-    volumes:
-      - db-data:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=omeka-s
       - MYSQL_ROOT_PASSWORD=rootpass
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
-    expose:
-      - "3306"
+    volumes:
+      - db-data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3306"
 
   backend:
-    image: biblibre/omeka-s:3.0.2
-    environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=pass
-      - OMEKA_ADMIN_EMAIL=admin@dummymail.com
-      - OMEKA_ADMIN_NAME=admin
-      - OMEKA_ADMIN_PASSWORD=admin_default_password
+    build: omeka_docker
+    #image: giocomai/omeka-s-docker:v3.1.1
     volumes:
-      - ./omeka-modules:/var/www/html/modules
+      - omeka-files:/var/www/html/files
     depends_on:
       - db
-      - solr
+      #- solr
     ports:
-      - "80:80"
+      - "8001:80"
 
-  solr:
-    image: solr:8.8.2
-    volumes:
-      - solr-data:/var/solr
-    expose:
-      - "8983"
-    ports:
-      - "8983:8983"
-
-  solr:
-    image: solr:8.8.2
-    volumes:
-      - solr-data:/var/solr
-    expose:
-      - "8983"
-    ports:
-      - "8983:8983"
+  # solr:
+  #   image: solr:8.8.2
+  #   volumes:
+  #     - solr_data:/var/solr
+  #   ports:
+  #     - "8983:8983"
+    # user: root # run as root to change the permissions of the solr folder
+    # # Change permissions of the solr folder, create a default core and start solr as solr user
+    # command: bash -c "chown -R 8983:8983 /var/solr && runuser -u solr -- solr start"
 
 volumes:
   db-data:
   solr-data:
+  omeka-files:
