@@ -14,7 +14,6 @@ services:
 
   omeka:
     build: omeka_docker
-    #image: giocomai/omeka-s-docker:v3.1.1
     volumes:
       - files:/var/www/html/files
     depends_on:
@@ -22,6 +21,15 @@ services:
       #- solr
     ports:
       - "8001:80"
+
+  ocr-service:
+    build: ocr_service
+    depends_on:
+      - omeka
+    environment:
+      - KEY_IDENTITY=QA8IzqSOYXKsFyz3qXJa2qC4WFHb7G5e
+      - KEY_CREDENTIAL=a28JA5cETnfAWXu8siCawJoPk5sHy30Q
+
 
   # solr:
   #   image: solr:8.8.2
@@ -33,10 +41,6 @@ services:
     # # Change permissions of the solr folder, create a default core and start solr as solr user
     # command: bash -c "chown -R 8983:8983 /var/solr && runuser -u solr -- solr start"
 
-  ocr-service:
-    build: ocr_service
-    depends_on:
-      - omeka
 
 volumes:
   db-data:

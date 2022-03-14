@@ -1,39 +1,19 @@
-# Omeka S
+# Digital Archive
 
-Info on some docker images https://forum.omeka.org/t/omeka-s-docker-image-for-version-3-0/13247/3, the current image is taken from https://git.biblibre.com/docker/omeka-s.
+This is code to easily deploy an Omeka S instance and an automatic OCR service which periodically process uploaded PDFs.
 
-## Base commands
+## Pre-requisites
 
-Assuming docker-compose is properly installed, just run `docker-compose -p omeka up -d` in this folder to start the deployment. `docker-compose -p omeka down` to stop it.
+- Docker install (for instance for Ubuntu https://docs.docker.com/engine/install/ubuntu/)
+- Docker-compose install ()
 
-The Omeka S instance is then accessible at `http://localhost:8080`.
+## Set modules in Omeka S
 
-An initial user is created as:
+Modules have to be downloaded in `omeka_docker/modules` before building/starting the docker services. For instance, one can run the following commands
 ```
-email: admin@dummymail.com
-password: admin_default_password
-```
+# Go to the proper directory
+cd omeka_docker/modules 
 
-It should be be changed at the first login to avoid security issues.
-
-### Test deployment
-
-http://34.65.82.241/admin
-seg.benoit@gmail.com
-r365Yl1fN&M
-
-
-## Modules
-
-`docker exec omeka_solr_1 bin/solr create_core -c omeka-s` to initialize solr core
-
-Set `solr:8983/solr/omeka-s` for the url of the solr core.
-
-The `docker-compose.yml` specifies the local `omeka-modules` folder as a volume. So adding modules can easily be done by just running the following commands
-
-```
-mkdir omeka-modules
-cd omeka-modules
 wget https://github.com/omeka-s-modules/Collecting/releases/download/v1.6.1/Collecting-1.6.1.zip
 unzip Collecting-1.6.1.zip
 
@@ -49,13 +29,39 @@ rm Search-0.9.0.zip
 wget https://github.com/biblibre/omeka-s-module-Solr/releases/download/v0.9.0/Solr-0.9.0.zip
 unzip Solr-0.9.0.zip
 rm Solr-0.9.0.zip
+
+wget https://github.com/omeka-s-modules/CustomVocab/releases/download/v1.5.0/CustomVocab-1.5.0.zip
+unzip CustomVocab-1.5.0.zip
+rm CustomVocab-1.5.0.zip
 ```
 
-## Things to address for deployment
+## Start the service
+
+Assuming docker-compose is properly installed, just run `docker-compose up -d --build` in this folder to (re)start the deployment. T
+
+The Omeka S instance is then accessible at `http://localhost:8080`.
+
+An initial user is created as:
+```
+email: admin@dummymail.com
+password: admin_default_password
+```
+
+It should be be changed at the first login to avoid security issues.
+
+
+## Modules
+
+`docker exec omeka_solr_1 bin/solr create_core -c omeka-s` to initialize solr core
+
+Set `solr:8983/solr/omeka-s` for the url of the solr core.
+
+
+## Additional things
 
 ### Upload size
 
-The default maximum file size for uploading document is quite small and should be increased. It is most likely a PHP configuration thing.
+Max Upload size can be configured in `.htaccess` in `omeka_docker` before rebuilding.
 
 ### HTTPS
 
@@ -64,7 +70,7 @@ Can probably be done by having a local proxy server in front (like `nginx`) and 
 ### Automatic Thumbnail of PDFs
 
 Needs to change imagemagick policy so that it process PDFs
-https://forum.omeka.org/t/thumbnail-image-icon-for-pdfs/6680/9
+https://forum.omeka.org/t/thumbnail-image-icon-for-pdfs/6680/9, already done in `imagemagick-policy.xml` in `omeka_docker`.
 
 ### Omeka Media as a volume directory
 
@@ -87,6 +93,10 @@ https://www.biblibre.com/fr/blog/rechercher-avec-solr-dans-omeka-s-1-installatio
 https://www.biblibre.com/fr/blog/rechercher-avec-solr-dans-omeka-s-2-facettes/
 
 ## API
+
+API keys can be created from the User page.
+key_identity: QA8IzqSOYXKsFyz3qXJa2qC4WFHb7G5e
+key_credential: a28JA5cETnfAWXu8siCawJoPk5sHy30Q
 
 Credentials generated from the admin dashboard
 - key_identity: 5UxoiInyatZiEIpUOmB9YOPXkrENK3IE
