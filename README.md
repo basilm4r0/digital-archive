@@ -2,12 +2,39 @@
 
 This is code to easily deploy an Omeka S instance and an automatic OCR service which periodically process uploaded PDFs.
 
+![Summary diagram](./docs/summary.svg)
+
 ## Pre-requisites
 
 - Docker install (for instance for Ubuntu https://docs.docker.com/engine/install/ubuntu/)
-- Docker-compose install ()
+- Docker-compose install (see https://docs.docker.com/compose/install/)
+- nginx installed (`sudo apt install nginx` or equivalent)
 
-## Set modules in Omeka S
+## Start the service
+
+Assuming docker-compose is properly installed, just run `docker-compose up -d --build` in this folder to (re)start the deployment.
+
+The Omeka S instance is then accessible locally on port 8001.
+
+In order for the port 8001 to be accessible from the outside, one should modify the `nginx` configuration by modifying the corresponding part of the `/etc/nginx/sites-available/default` file with the following snippet
+```
+location / {
+        proxy_pass_header Server;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+
+        proxy_pass http://127.0.0.1:8001;
+}
+```
+
+Then restart the nginx server with `sudo service nginx restart`, the Omeka S instance should now be accessible from the outside world directly.
+
+
+## Add modules in Omeka S
 
 Modules have to be downloaded in `omeka_docker/modules` before building/starting the docker services. For instance, one can run the following commands
 ```
@@ -35,27 +62,13 @@ unzip CustomVocab-1.5.0.zip
 rm CustomVocab-1.5.0.zip
 ```
 
-## Start the service
+After adding new modules, one should restart the services with the usual `docker-compose up -d` from the main directory.
 
-Assuming docker-compose is properly installed, just run `docker-compose up -d --build` in this folder to (re)start the deployment. T
+### Search module (experimental)
 
-The Omeka S instance is then accessible at `http://localhost:8080`.
-
-An initial user is created as:
-```
-email: admin@dummymail.com
-password: admin_default_password
-```
-
-It should be be changed at the first login to avoid security issues.
-
-
-## Modules
-
-`docker exec omeka_solr_1 bin/solr create_core -c omeka-s` to initialize solr core
+`docker exec digitial-archive_solr_1 bin/solr create_core -c omeka-s` to initialize solr core
 
 Set `solr:8983/solr/omeka-s` for the url of the solr core.
-
 
 ## Additional things
 
@@ -65,16 +78,12 @@ Max Upload size can be configured in `.htaccess` in `omeka_docker` before rebuil
 
 ### HTTPS
 
-Can probably be done by having a local proxy server in front (like `nginx`) and using certbot for https configuration of the proxy server.
+Just needs to 
 
 ### Automatic Thumbnail of PDFs
 
-Needs to change imagemagick policy so that it process PDFs
-https://forum.omeka.org/t/thumbnail-image-icon-for-pdfs/6680/9, already done in `imagemagick-policy.xml` in `omeka_docker`.
-
-### Omeka Media as a volume directory
-
-Currently the media files (such as PDFs) directory is not a volume and is probably erased between docker restarts, that needs to be addressed.
+Imagemagick policy has to be changed so that it process PDFs
+https://forum.omeka.org/t/thumbnail-image-icon-for-pdfs/6680/9, already taken care of in `imagemagick-policy.xml` in `omeka_docker`.
 
 ### Backups
 
@@ -101,11 +110,6 @@ key_credential: a28JA5cETnfAWXu8siCawJoPk5sHy30Q
 Credentials generated from the admin dashboard
 - key_identity: 5UxoiInyatZiEIpUOmB9YOPXkrENK3IE
 - key_credential: dhz4REYtv7E8qabZ1CMxz4KmiAZFCHCi
-
-## PDF thumbnails
-
-Needs to change imagemagick policy so that it process PDFs
-https://forum.omeka.org/t/thumbnail-image-icon-for-pdfs/6680/9
 
 # OCR
 
