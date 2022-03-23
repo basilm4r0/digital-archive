@@ -68,7 +68,7 @@ After adding new modules, one should restart the services with the usual `docker
 
 ### Search module (experimental)
 
-`docker exec digitial-archive_solr_1 bin/solr create_core -c omeka-s` to initialize solr core
+`docker exec digital-archive_solr_1 bin/solr create_core -c omeka-s` to initialize solr core
 
 Set `solr:8983/solr/omeka-s` for the url of the solr core.
 

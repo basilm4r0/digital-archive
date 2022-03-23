@@ -29,20 +29,18 @@ services:
     environment:
       - KEY_IDENTITY=QA8IzqSOYXKsFyz3qXJa2qC4WFHb7G5e
       - KEY_CREDENTIAL=a28JA5cETnfAWXu8siCawJoPk5sHy30Q
+      - CLASSES_TO_MONITOR=bibo:Issue,bibo:Document
 
 
   # solr:
   #   image: solr:8.8.2
   #   volumes:
-  #     - solr_data:/var/solr
+  #     - solr-data:/var/solr
   #   ports:
   #     - "8983:8983"
-    # user: root # run as root to change the permissions of the solr folder
-    # # Change permissions of the solr folder, create a default core and start solr as solr user
-    # command: bash -c "chown -R 8983:8983 /var/solr && runuser -u solr -- solr start"
 
 
 volumes:
   db-data:
-  solr-data:
   files:
+  # solr-data:
