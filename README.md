@@ -10,11 +10,15 @@ This is code to easily deploy an Omeka S instance and an automatic OCR service w
 - Docker-compose install (see https://docs.docker.com/compose/install/)
 - nginx installed (`sudo apt install nginx` or equivalent)
 
-## Start the service
+## Initial Configuration
 
-Assuming docker-compose is properly installed, just run `docker-compose up -d --build` in this folder to (re)start the deployment.
+### Start Omeka S
+
+Assuming docker-compose is properly installed, just run `docker-compose up -d --build omeka db` in this folder to start the Omeka S instance.
 
 The Omeka S instance is then accessible locally on port 8001.
+
+#### Nginx configuration
 
 In order for the port 8001 to be accessible from the outside, one should modify the `nginx` configuration by modifying the corresponding part of the `/etc/nginx/sites-available/default` file with the following snippet
 ```
@@ -35,10 +39,38 @@ location / {
 
 Then restart the nginx server with `sudo service nginx restart`, the Omeka S instance should now be accessible from the outside world directly.
 
+### Add Ontology Terms
 
-## Add modules in Omeka S
+In the admin panel -> Vocabularies -> Import new vocabulary.
 
-Modules have to be downloaded in `omeka_docker/modules` before building/starting the docker services. For instance, one can run the following commands
+For the form do as follow:
+- Label: Sabil Ontology
+- Namespace URI: `http://sabil.ethz.ch/ns/terms/`
+- Namespace prefix: `sabil`
+- Vocabulary file: `sabil_ontology.ttl` (present at the root of this repository)
+
+### Create the OCR Service
+
+- In the admin page of Omeka S, create a new user (set it as active) with edition access (Editor or above)
+- In the "Edit User" page of this user, create an API Key.
+- Create an `env_variables` file in this folder (use `env_variables.example` as a template), and specify the API credentials with the values obtained at the previous step (`key_identity` and `key_credential`)
+- Build and start the OCR service `docker-compose up -d --build ocr-service`
+
+## OCR Bot Behaviour
+
+See the corresponding [README.md](./ocr) in the `ocr` folder.
+
+## Other tasks
+
+### Configure max upload size for file
+
+Max Upload size has to be changed in two locations:
+- in `.htaccess` in `omeka_docker` before rebuilding (`upload_max_filesize` and `post_max_size`)
+- in the nginx configuration in `/etc/nginx/sites-available/default` (`client_max_body_size`)
+
+### Add modules in Omeka S
+
+Modules have to be downloaded in `omeka_docker/modules` before building/starting the docker services. For instance, one can run the following commands for some module examples
 ```
 # Go to the proper directory
 cd omeka_docker/modules 
@@ -64,81 +96,31 @@ unzip CustomVocab-1.5.0.zip
 rm CustomVocab-1.5.0.zip
 ```
 
-After adding new modules, one should restart the services with the usual `docker-compose up -d` from the main directory.
+After adding new modules, one should restart the services with the usual `docker-compose up -d --build` from the main directory.
+
+### Database backups
+
+TODO
 
 ### Search module (experimental)
 
+Use the modules
+```
+wget https://github.com/biblibre/omeka-s-module-Search/releases/download/v0.9.0/Search-0.9.0.zip
+unzip Search-0.9.0.zip
+rm Search-0.9.0.zip
+wget https://github.com/biblibre/omeka-s-module-Solr/releases/download/v0.9.0/Solr-0.9.0.zip
+unzip Solr-0.9.0.zip
+rm Solr-0.9.0.zip
+```
+
 `docker exec digital-archive_solr_1 bin/solr create_core -c omeka-s` to initialize solr core
 
-Set `solr:8983/solr/omeka-s` for the url of the solr core.
+Set `solr:8983/solr/omeka-s` for the url of the solr core in the configuration
 
-## Additional things
-
-### Upload size
-
-Max Upload size can be configured in `.htaccess` in `omeka_docker` before rebuilding.
-
-### HTTPS
-
-Just needs to 
-
-### Automatic Thumbnail of PDFs
-
-Imagemagick policy has to be changed so that it process PDFs
-https://forum.omeka.org/t/thumbnail-image-icon-for-pdfs/6680/9, already taken care of in `imagemagick-policy.xml` in `omeka_docker`.
 
 ### Backups
 
 Probably the easiest way to do it is by saving the docker volumes. For instance, we could change them to be local directories (just like the modules), and save them to `.tar` files and upload them to a S3 or equivalent long term storage. It is important that the deployment would be shut down before saving the directories to avoid conccurent read/writes.
 
 The backup procedure should be tried before deploying.
-
-
-# Notes (for Benoit)
-
-## Full-text-search
-
-https://forum.omeka.org/t/what-are-the-best-practices-for-full-text-search-with-omeka-s/5891
-
-https://www.biblibre.com/fr/blog/rechercher-avec-solr-dans-omeka-s-1-installation-et-configuration-minimale/
-https://www.biblibre.com/fr/blog/rechercher-avec-solr-dans-omeka-s-2-facettes/
-
-## API
-
-API keys can be created from the User page.
-key_identity: QA8IzqSOYXKsFyz3qXJa2qC4WFHb7G5e
-key_credential: a28JA5cETnfAWXu8siCawJoPk5sHy30Q
-
-Credentials generated from the admin dashboard
-- key_identity: 5UxoiInyatZiEIpUOmB9YOPXkrENK3IE
-- key_credential: dhz4REYtv7E8qabZ1CMxz4KmiAZFCHCi
-
-# OCR
-
-OCR solutions:
-    Opensource -> Kraken
-    https://github.com/mittagessen/kraken
-    Arabic model https://github.com/mittagessen/kraken/issues/121
-    Commercial -> Google OCR
-
-OCR arabic
-https://github.com/OpenITI/OCR_GS_Data
-
-
-Directly convert to OCRized PDF https://github.com/jbarlow83/OCRmyPDF
-Possible to add plugins to add OCREngine https://github.com/jbarlow83/OCRmyPDF/blob/master/src/ocrmypdf/pluginspec.py#L321
-Generating PDF is probably not super simple though, generating hocr is probably the safest route, but according to https://ocrmypdf.readthedocs.io/en/latest/advanced.html#the-hocr-renderer the hocr pdf renderer does not handle non-latin script characters.
-
-Kraken arabic model https://github.com/OpenITI/OCR_GS_Data/blob/master/ara/abhath/arabic_generalized.mlmodel
-
-# CollectiveAccess
-
-Single docker file 1.7.11 https://github.com/GovernoRegionalAcores/collectiveaccess
-Docker compose 1.7.8 https://github.com/pkuehne/collectiveaccess
-
-In collectiveaccess repo (which is the compose repo with the version updated to 1.7.11), just build the image `docker build . -t collective` then run `docker-compose -p collectiveaccess up -d`.
-
-Needs to install by going to `127.0.0.1:8080/providence/install`
-
-Collectiveaccess 
-- admin, h3r1tag3
