@@ -58,7 +58,7 @@ For the form do as follow:
 
 ## OCR Bot Behaviour
 
-See the corresponding [README.md](./ocr) in the `ocr` folder.
+See the corresponding [README.md](ocr_service) in the `ocr` folder.
 
 ## Other tasks
 
