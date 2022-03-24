@@ -51,7 +51,8 @@ class OCRProcessor:
             media_item = self.api.get_media_by_id(media_id)
 
             # Check that media is generated one
-            if media_item.get('o:resource_class', {}).get("o:id", -1) == self.PROCESSED_MEDIA_CLASS_ID:
+            class_data = media_item.get('o:resource_class')
+            if class_data and (class_data.get("o:id", -1) == self.PROCESSED_MEDIA_CLASS_ID):
                 self.api.delete_media_by_id(media_id)
             
         # Delete page items
