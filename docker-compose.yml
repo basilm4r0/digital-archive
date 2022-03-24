@@ -24,12 +24,11 @@ services:
 
   ocr-service:
     build: ocr_service
+    restart: always
     depends_on:
       - omeka
-    environment:
-      - KEY_IDENTITY=QA8IzqSOYXKsFyz3qXJa2qC4WFHb7G5e
-      - KEY_CREDENTIAL=a28JA5cETnfAWXu8siCawJoPk5sHy30Q
-      - CLASSES_TO_MONITOR=bibo:Issue,bibo:Document
+    env_file:
+     - env_variables
 
 
   # solr:

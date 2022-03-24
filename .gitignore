@@ -2,3 +2,4 @@
 /omeka-modules
 
 *.pyc
+env_variables

@@ -1,0 +1,6 @@
+OMEKA_S_API_KEY_IDENTITY=<...>
+OMEKA_S_API_KEY_CREDENTIAL=<...>
+PROPERTY_TO_MONITOR=sabil:documentProcessingStatus
+PROPERTY_ERROR_MESSAGE=sabil:documentProcessingFailureMessage
+CLASS_GENERATED_PAGE=sabil:GeneratedPage
+CLASS_PROCESSED_MEDIA=sabil:ProcessedMedia

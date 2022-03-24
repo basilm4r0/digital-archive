@@ -29,7 +29,7 @@ location / {
 
         proxy_pass http://127.0.0.1:8001;
         # Max file upload size
-        client_max_body_size 100M;
+        client_max_body_size 600M;
 }
 ```
 
