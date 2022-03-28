@@ -3,3 +3,5 @@
 
 *.pyc
 env_variables
+*.sql
+*.sql.gz

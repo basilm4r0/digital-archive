@@ -56,11 +56,28 @@ For the form do as follow:
 - Create an `env_variables` file in this folder (use `env_variables.example` as a template), and specify the API credentials with the values obtained at the previous step (`key_identity` and `key_credential`)
 - Build and start the OCR service `docker-compose up -d --build ocr-service`
 
+Looking at the logs of the ocr-service can be done with `docker-compose logs -f ocr-service`
+
 ## OCR Bot Behaviour
 
 See the corresponding [README.md](ocr_service) in the `ocr` folder.
 
 ## Other tasks
+
+### Backups
+
+#### Database backups
+
+The most important backup is the database data, which includes all metadata, user, configuration information of the Omeka S instance.
+
+- Do a dump of the current state of the database: `docker-compose exec db /bin/bash -c "/usr/bin/mysqldump -u root --password=rootpass omeka-s 2> /dev/null" | gzip > backup_$(date +"%Y-%m-%d_%H_%M_%S").sql.gz`
+- Restore the database to a specific dump file : `gunzip < "backup_<DATE-OF-THE-BACKUP-FILE>.sql.gz" | docker-compose exec -T db /usr/bin/mysql -u root --password=rootpass omeka-s`
+
+#### File backups
+
+Files are stored in a docker volume and are not easily backup-able directly. Indeed, all medias (original files, thumbnails, processed pages, etc...) are stored together in the `files` docker volume. As such, it is backed-up by the ETH backup system, but making a manual backup is much harder directly.
+
+Because of this, if some original media file is deleted by mistake, there is no choice other than asking ETH IT to perform a rollback to a previous state to restore it.
 
 ### Configure max upload size for file
 
@@ -98,10 +115,6 @@ rm CustomVocab-1.5.0.zip
 
 After adding new modules, one should restart the services with the usual `docker-compose up -d --build` from the main directory.
 
-### Database backups
-
-TODO
-
 ### Search module (experimental)
 
 Use the modules
@@ -117,10 +130,3 @@ rm Solr-0.9.0.zip
 `docker exec digital-archive_solr_1 bin/solr create_core -c omeka-s` to initialize solr core
 
 Set `solr:8983/solr/omeka-s` for the url of the solr core in the configuration
-
-
-### Backups
-
-Probably the easiest way to do it is by saving the docker volumes. For instance, we could change them to be local directories (just like the modules), and save them to `.tar` files and upload them to a S3 or equivalent long term storage. It is important that the deployment would be shut down before saving the directories to avoid conccurent read/writes.
-
-The backup procedure should be tried before deploying.

@@ -3,6 +3,7 @@ import json
 import pprint
 from typing import Optional, List, Dict, Any
 
+
 class OmekaSGateway(object):
     def __init__(self, install_location, key_identity, key_credential):
         self.install_location = install_location
