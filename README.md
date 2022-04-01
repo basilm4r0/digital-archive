@@ -12,6 +12,10 @@ This is code to easily deploy an Omeka S instance and an automatic OCR service w
 
 ## Initial Configuration
 
+### Create `env_variables`
+
+The `env_variables` file (used eventually by the ocr-service) has to be created first, so just run `cp env_variables.example env_variables`.
+
 ### Start Omeka S
 
 Assuming docker-compose is properly installed, just run `docker-compose up -d --build omeka db` in this folder to start the Omeka S instance.
@@ -53,7 +57,7 @@ For the form do as follow:
 
 - In the admin page of Omeka S, create a new user (set it as active) with edition access (Editor or above)
 - In the "Edit User" page of this user, create an API Key.
-- Create an `env_variables` file in this folder (use `env_variables.example` as a template), and specify the API credentials with the values obtained at the previous step (`key_identity` and `key_credential`)
+- In the `env_variables` file in this folder (created from the template `env_variables.example`), and specify the API credentials with the values obtained at the previous step (`key_identity` and `key_credential`)
 - Build and start the OCR service `docker-compose up -d --build ocr-service`
 
 Looking at the logs of the ocr-service can be done with `docker-compose logs -f ocr-service`
@@ -67,6 +71,8 @@ See the corresponding [README.md](ocr_service) in the `ocr` folder.
 ### Logging
 
 Printing latest logs of Omeka-S can be done with `docker-compose exec -T omeka tail -f logs/application.log`.
+
+Prining logs of the `ocr-service` : `docker-compose logs -f ocr-service`.
 
 ### Backups
 
@@ -104,13 +110,6 @@ unzip ValueSuggest-1.8.0.zip
 
 wget https://github.com/zerocrates/PdfEmbedS/releases/download/v1.2.0/PdfEmbed-1.2.0.zip
 unzip PdfEmbed-1.2.0.zip
-
-wget https://github.com/biblibre/omeka-s-module-Search/releases/download/v0.9.0/Search-0.9.0.zip
-unzip Search-0.9.0.zip
-rm Search-0.9.0.zip
-wget https://github.com/biblibre/omeka-s-module-Solr/releases/download/v0.9.0/Solr-0.9.0.zip
-unzip Solr-0.9.0.zip
-rm Solr-0.9.0.zip
 
 wget https://github.com/omeka-s-modules/CustomVocab/releases/download/v1.5.0/CustomVocab-1.5.0.zip
 unzip CustomVocab-1.5.0.zip
