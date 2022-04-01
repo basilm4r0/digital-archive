@@ -43,6 +43,8 @@ location / {
 
 Then restart the nginx server with `sudo service nginx restart`, the Omeka S instance should now be accessible from the outside world directly.
 
+NB: for https configuration, the following process can be followed https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal
+
 ### Add Ontology Terms
 
 In the admin panel -> Vocabularies -> Import new vocabulary.
