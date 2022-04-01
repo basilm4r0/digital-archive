@@ -64,6 +64,10 @@ See the corresponding [README.md](ocr_service) in the `ocr` folder.
 
 ## Other tasks
 
+### Logging
+
+Printing latest logs of Omeka-S can be done with `docker-compose exec -T omeka tail -f logs/application.log`.
+
 ### Backups
 
 #### Database backups
