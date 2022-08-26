@@ -33,7 +33,7 @@ RUN pecl install solr-2.5.1 && docker-php-ext-enable solr
 
 # Add the Omeka-S PHP code
 # Latest Omeka version, check: https://omeka.org/s/download/
-RUN wget --no-verbose "https://github.com/omeka/omeka-s/releases/download/v3.2.1/omeka-s-3.2.1.zip" -O /var/www/latest_omeka_s.zip
+RUN wget --no-verbose "https://github.com/omeka/omeka-s/releases/download/v3.2.2/omeka-s-3.2.2.zip" -O /var/www/latest_omeka_s.zip
 RUN unzip -q /var/www/latest_omeka_s.zip -d /var/www/ \
     &&  rm /var/www/latest_omeka_s.zip \
     &&  rm -rf /var/www/html/ \
