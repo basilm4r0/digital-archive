@@ -18,6 +18,7 @@ class OCRProcessor:
         self.PROCESSED_MEDIA_CLASS_ID = api.get_resource_class_id(processed_media_class)
         self.IS_PART_OF_ID = api.get_property_id("dcterms:isPartOf")
         self.DCTERMS_TITLE_ID = api.get_property_id("dcterms:title")
+        self.BIBO:SHORT_TITLE_IF = api.get_property_id("bibo:shortTitle")
         self.DCTERMS_CREATOR_ID = api.get_property_id("dcterms:creator")
         self.DCTERMS_LANGUAGE_ID = api.get_property_id("dcterms:language")
         self.DOCUMENT_STATUS_ID = api.get_property_id(document_status_property)
@@ -156,6 +157,7 @@ class OCRProcessor:
         try:
             item_data = self.api.get_item_by_id(item_id)
             item_title = item_data['o:title']
+            file_name = item_data['bibo:shortTitle']
 
             media_ids = [m['o:id'] for m in item_data['o:media']]
             media_items = [self.api.get_media_by_id(m['o:id']) for m in item_data['o:media']]
@@ -200,7 +202,7 @@ class OCRProcessor:
             complete_pdf = join_pdfs(processed_ocr_pages)
             self.api.add_media(
                 item_id=item_id,
-                filename=f"{item_title}.pdf",
+                filename=f"{file_name}.pdf",
                 file_data=complete_pdf,
                 mimetype='application/pdf',
                 resource_class_id=self.PROCESSED_MEDIA_CLASS_ID)
