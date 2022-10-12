@@ -18,6 +18,7 @@ class OCRProcessor:
         self.PROCESSED_MEDIA_CLASS_ID = api.get_resource_class_id(processed_media_class)
         self.IS_PART_OF_ID = api.get_property_id("dcterms:isPartOf")
         self.DCTERMS_TITLE_ID = api.get_property_id("dcterms:title")
+        self.BIBO_SHORT_TITLE_ID = api.get_property_id("bibo:shortTitle")
         self.DCTERMS_CREATOR_ID = api.get_property_id("dcterms:creator")
         self.DCTERMS_LANGUAGE_ID = api.get_property_id("dcterms:language")
         self.DOCUMENT_STATUS_ID = api.get_property_id(document_status_property)
@@ -97,6 +98,7 @@ class OCRProcessor:
     def _add_generated_page(self, item_data: dict, part_number: int, page_raw_file: bytes, ocr_text: str):
         item_title = item_data['o:title']
         item_id = item_data['o:id']
+        item_short_title = item_data['bibo:shortTitle'][0]['@value']
         page_title = f"{item_title}, part {part_number}"
         page_item = self.api.add_item({
             "o:resource_class": {"o:id": self.GENERATED_PAGE_CLASS_ID},
@@ -128,7 +130,7 @@ class OCRProcessor:
         })
         self.api.add_media(
             item_id=page_item['o:id'],
-            filename=f"{page_title}.pdf",
+            filename=f"{item_short_title}, part {part_number}.pdf",
             file_data=page_raw_file,
             mimetype='application/pdf'
         )
@@ -156,6 +158,7 @@ class OCRProcessor:
         try:
             item_data = self.api.get_item_by_id(item_id)
             item_title = item_data['o:title']
+            file_name = item_data['bibo:shortTitle']
 
             media_ids = [m['o:id'] for m in item_data['o:media']]
             media_items = [self.api.get_media_by_id(m['o:id']) for m in item_data['o:media']]
@@ -184,7 +187,7 @@ class OCRProcessor:
                 ocr_page, ocr_text = ocr_pdf(p, language=languages)
                 ocr_text = clean_ocr_text(ocr_text)
                 return ocr_page, ocr_text
-            
+
             with ThreadPoolExecutor(3) as e:
                 for i, (ocr_page, ocr_text) in tqdm(enumerate(e.map(_process_page, pages_raw)), total=len(pages_raw), desc="Processing pages"):
                     # ocr_page, ocr_text = ocr_pdf(p, language=languages)
@@ -200,7 +203,7 @@ class OCRProcessor:
             complete_pdf = join_pdfs(processed_ocr_pages)
             self.api.add_media(
                 item_id=item_id,
-                filename=f"{item_title}.pdf",
+                filename=f"{file_name[0]['@value']}.pdf",
                 file_data=complete_pdf,
                 mimetype='application/pdf',
                 resource_class_id=self.PROCESSED_MEDIA_CLASS_ID)
