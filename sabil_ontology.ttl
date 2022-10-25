@@ -16,6 +16,12 @@ sabil:documentProcessingStatus a rdf:Property ;
     rdfs:domain o:Resource ;
     vs:term_status "experimental" .
 
+sabil:submittedBy a rdf:Property ;
+    rdfs:label "Submitted By" ;
+    rdfs:comment "The user who submitted the document" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
 sabil:documentProcessingFailureMessage a rdf:Property ;
     rdfs:label "Document Processing Failure Message" ;
     rdfs:domain o:Resource ;
