@@ -100,11 +100,9 @@ class OCRProcessor:
         item_title = item_data['o:title']
         item_id = item_data['o:id']
         item_short_title = item_data['bibo:shortTitle'][0]['@value']
-        date = item_data['dcterms:date'][0]['@value']
-        creator = item_data['dcterms:creator'][0]['@value']
         page_title = f"{item_title}، ص {part_number}"
         print(f"Adding page {page_title}")
-        page_item = self.api.add_item({
+        page_dict = {
             "o:resource_class": {"o:id": self.GENERATED_PAGE_CLASS_ID},
             "dcterms:title": [{
                 "property_id": self.DCTERMS_TITLE_ID,
@@ -118,25 +116,30 @@ class OCRProcessor:
                 "@value" : ocr_text
             }],
 
-            "dcterms:date": [{
-                "property_id": self.DCTERMS_DATE,
-                "type" : "literal",
-                "@value" : date
-            }],
-
-            "dcterms:creator": [{
-                 "property_id": self.DCTERMS_CREATOR_ID,
-                 "type" : "literal",
-                 "@value" : creator,
-             }],
-            
-            "dcterms:isPartOf": [{
+           "dcterms:isPartOf": [{
                 "property_id": self.IS_PART_OF_ID,
                 "type" : 'resource:item',
                 'value_resource_id': item_id,
                 'value_resource_name': 'items',
             }]
-        })
+        }
+        if('dcterms:date' in item_data):
+            date = item_data['dcterms:date'][0]['@value']
+            date_property = {"dcterms:date": [{
+                "property_id": self.DCTERMS_DATE,
+                "type" : "literal",
+                "@value" : date
+            }]}
+            page_dict.update(date_property)
+        if('dcterms:creator' in item_data):
+            creator = item_data['dcterms:creator'][0]['@value']
+            creator_property = {"dcterms:creator": [{
+                 "property_id": self.DCTERMS_CREATOR_ID,
+                 "type" : "literal",
+                 "@value" : creator,
+             }]}
+            page_dict.update(creator_property)
+        page_item = self.api.add_item(page_dict)
         self.api.add_media(
             item_id=page_item['o:id'],
             filename=f"{item_short_title}-صفحة_{part_number}.pdf",
