@@ -30,7 +30,8 @@ class OmekaSGateway(object):
         elif method == "PATCH":
             r = requests.patch(uri, params=auth_params, json=params)
         elif method == "DELETE":
-            r = requests.delete(uri, params=auth_params)
+            requests.delete(uri, params=auth_params)
+            return
         else:
             raise NotImplementedError(f"method='{method}'")
         return r.json()
