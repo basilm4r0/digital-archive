@@ -38,7 +38,7 @@ def ocr_pdf(raw_file: bytes, language=("ara",)) -> Tuple[bytes, str]:
     f_out = io.BytesIO()
     txt_out = io.StringIO()
     with tempfile.NamedTemporaryFile('r') as tmp_txt_f:
-        ocrmypdf.ocr(f, f_out, language=language, sidecar=tmp_txt_f.name, use_threads=True, progress_bar=False, redo_ocr=True)
+        ocrmypdf.ocr(f, f_out, language=language, sidecar=tmp_txt_f.name, force_ocr=True,  use_threads=True, progress_bar=False) #, redo_ocr=True)
         txt = tmp_txt_f.read()
     f_out.seek(0)
     txt_out.seek(0)
