@@ -100,7 +100,7 @@ class OCRProcessor:
         item_title = item_data['o:title']
         item_id = item_data['o:id']
         item_short_title = item_data['bibo:shortTitle'][0]['@value']
-        page_title = f"{item_title}، ص {part_number}"
+        page_title = f"{item_title} (ص {part_number})"
         print(f"Adding page {page_title}")
         page_dict = {
             "o:resource_class": {"o:id": self.GENERATED_PAGE_CLASS_ID},
