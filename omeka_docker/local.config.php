@@ -9,7 +9,7 @@ return [
         'sslcafile' => null,
     ],
     'cli' => [
-        'phpcli_path' => null,
+        'phpcli_path' => '/usr/local/bin/php',
     ],
     'thumbnails' => [
         'types' => [
