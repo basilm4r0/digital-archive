@@ -26,14 +26,15 @@ RUN apt-get -qq update && apt-get -qq -y --no-install-recommends install \
     libcurl4-gnutls-dev
 
 # Install the PHP extensions we need
-RUN docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/
-RUN docker-php-ext-install -j$(nproc) iconv pdo pdo_mysql mysqli gd
+RUN docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/ \
+    && docker-php-ext-configure intl
+RUN docker-php-ext-install -j$(nproc) iconv pdo pdo_mysql mysqli gd intl
 RUN yes | pecl install imagick && docker-php-ext-enable imagick
-RUN pecl install solr-2.5.1 && docker-php-ext-enable solr
+# RUN pecl install solr-2.5.1 && docker-php-ext-enable solr
 
 # Add the Omeka-S PHP code
 # Latest Omeka version, check: https://omeka.org/s/download/
-RUN wget --no-verbose "https://github.com/omeka/omeka-s/releases/download/v3.2.3/omeka-s-3.2.3.zip" -O /var/www/latest_omeka_s.zip
+RUN wget --no-verbose "https://github.com/omeka/omeka-s/releases/download/v4.0.1/omeka-s-4.0.1.zip" -O /var/www/latest_omeka_s.zip
 RUN unzip -q /var/www/latest_omeka_s.zip -d /var/www/ \
     &&  rm /var/www/latest_omeka_s.zip \
     &&  rm -rf /var/www/html/ \
@@ -45,6 +46,7 @@ COPY ./.htaccess /var/www/html/.htaccess
 
 COPY ./database.ini /var/www/html/config/
 COPY ./local.config.php /var/www/html/config/
+COPY ./php.ini /usr/local/etc/php/
 COPY ./modules /var/www/html/modules
 COPY ./themes /var/www/html/themes
 RUN mkdir -p /var/www/html/files
