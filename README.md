@@ -87,9 +87,14 @@ The most important backup is the database data, which includes all metadata, use
 
 #### File backups
 
-Files are stored in a docker volume and are not easily backup-able directly. Indeed, all medias (original files, thumbnails, processed pages, etc...) are stored together in the `files` docker volume. As such, it is backed-up by the ETH backup system, but making a manual backup is much harder directly.
+Files are stored in a docker volume. Indeed, all medias (original files, thumbnails, processed pages, etc...) are stored together in the `files` docker volume. This volume can be backed up and restored by running the following commands, substituting the placeholder for the name of the Omeka docker container (which can be found with `docker ps -a` command):
 
-Because of this, if some original media file is deleted by mistake, there is no choice other than asking ETH IT to perform a rollback to a previous state to restore it.
+
+- Store volume data in a compressed tar ball: `docker run --rm --volumes-from NAME_OF_OMEKA_CONTAINER -v $(pwd):/backup busybox tar czvf /backup/backup.tar.gz /var/www/html/files`
+- Extract file to volume of new Omeka container: `docker run --rm --volumes-from NAME_OF_NEW_OMEKA_CONTAINER -v $(pwd):/backup busybox /bin/sh -c "cd / && tar xzvf /backup/backup.tar.gz --strip 1"`
+
+
+Since all server files are backed up by ETH, if some original media file is deleted by mistake, asking ETH IT to perform a rollback to a previous state would be the easiest way to restore it.
 
 ### Configure max upload size for file
 
@@ -102,7 +107,7 @@ Max Upload size has to be changed in two locations:
 Modules have to be downloaded in `omeka_docker/modules` before building/starting the docker services. For instance, one can run the following commands for some module examples
 ```
 # Go to the proper directory
-cd omeka_docker/modules 
+cd omeka_docker/modules
 
 wget https://github.com/omeka-s-modules/Collecting/releases/download/v1.6.1/Collecting-1.6.1.zip
 unzip Collecting-1.6.1.zip
