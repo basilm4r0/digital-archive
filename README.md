@@ -82,6 +82,8 @@ Prining logs of the `ocr-service` : `docker-compose logs -f ocr-service`.
 
 The most important backup is the database data, which includes all metadata, user, configuration information of the Omeka S instance.
 
+NOTE: You must navigate to the root directory of the local repository before running the following commands.
+
 - Do a dump of the current state of the database: `docker-compose exec db /bin/bash -c "/usr/bin/mysqldump -u root --password=rootpass omeka-s 2> /dev/null" | gzip > backup_$(date +"%Y-%m-%d_%H_%M_%S").sql.gz`
 - Restore the database to a specific dump file : `gunzip < "backup_<DATE-OF-THE-BACKUP-FILE>.sql.gz" | docker-compose exec -T db /usr/bin/mysql -u root --password=rootpass omeka-s`
 
