@@ -90,7 +90,7 @@ The most important backup is the database data, which includes all metadata, use
 Files are stored in a docker volume associated with the Omeka container. Indeed, all medias (original files, thumbnails, processed pages, etc...) are stored together in the `files` docker volume. This volume can be backed up and restored by running the following commands, substituting the placeholder for the name of the Omeka docker container (which can be found with `docker ps -a`):
 
 - Store volume data in a compressed tar ball: `docker run --rm --volumes-from NAME_OF_OMEKA_CONTAINER -v $(pwd):/backup busybox tar czvf /backup/backup.tar.gz /var/www/html/files`
-- Extract file to volume of new Omeka container: `docker run --rm --volumes-from NAME_OF_NEW_OMEKA_CONTAINER -v $(pwd):/backup busybox /bin/sh -c "cd / && tar xzvf /backup/backup.tar.gz --strip 1"`
+- Extract file to volume of new Omeka container: `docker run --rm --volumes-from NAME_OF_NEW_OMEKA_CONTAINER -v $(pwd):/backup:Z busybox /bin/sh -c "cd / && tar xzvf /backup/backup.tar.gz --strip 1"`
 
 Since all server files are backed up by ETH, if some original media file is deleted by mistake, asking ETH IT to perform a rollback to a previous state would be the easiest way to restore it.
 
