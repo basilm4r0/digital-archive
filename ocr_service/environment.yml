@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.9
-  - ocrmypdf=13
+  - ocrmypdf=14
   - pypdf2=1.26
   - requests
   - pip:
