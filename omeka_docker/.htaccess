@@ -1,6 +1,12 @@
 SetEnv APPLICATION_ENV "development"
 
 RewriteEngine On
+
+# Redirect the urls of original files to the routes of the module Access to control access
+# Set rule for original and selected derivative files (usually at least large thumbnails).
+RewriteRule "^/files/(original|large)/(.*)$" "/access/files/$1/$2" [P]
+RewriteRule "^/download/files/(original|large)/(.*)$" "/access/files/$1/$2" [P]
+
 # The following rule tells Apache that if the requested filename
 # exists, simply serve it.
 RewriteCond %{REQUEST_FILENAME} -s [OR]
